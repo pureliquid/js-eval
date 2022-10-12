@@ -1,0 +1,18 @@
+{
+  "name": "remote-eval",
+  "version": "1.0.0",
+  "description": "remote execute commands over websocket",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "kerschbaumer stefan",
+  "license": "ISC",
+  "dependencies": {
+    "keypress": "^0.2.1",
+    "ws": "^7.2.1"
+  },
+  "devDependencies": {
+    "@types/node": "^13.5.2"
+  }
+}
