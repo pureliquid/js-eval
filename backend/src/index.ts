@@ -1,84 +1,52 @@
+// @ts-nocheck
 import * as _WebSocket from 'ws';
 import * as readline from 'readline';
 import * as fs from 'fs';
-let input: string = '';
-let inputList: string[] = [];
+const rl = readline.createInterface({input: process.stdin, output: process.stdout});
+const prompt = (query) => new Promise((resolve) => rl.question(query, resolve));
 
-let rl;
-let lastInputs: string[] = [];
-let currentLastIndex: number = 0;
-
-// Get process.stdin as the standard input object.
-const standard_input = process.stdin;
-
-// Set input character encoding.
-standard_input.setEncoding('utf-8');
-
-const wss = new _WebSocket.Server({port: 8080});
-
-
-
-
-const setupLineReader = (ws) => {
-    currentLastIndex = 0;
-    rl = readline.createInterface({
-        input: process.stdin,
-        output: process.stdout
-    });
-
-    rl.on('line', (cmd) => {
-
-        // input.push(cmd);
-        // rl.close(cmd);
-        // rl.close();
-        if (cmd === ':::') {
-            rl.close();
-        } else {
-            inputList.push(cmd);
-        }
-    });
-
-    rl.on('close', (cmd) => {
-        // console.log(input.join(' '));
-        // lastInputs.push(input.join('\n'));
-        ws.send(inputList.join(' '));
-        inputList = [];
-        rl.removeAllListeners();
-    });
-
-    rl.prompt();
+const fetchInput = async (doOnFetch: (res: string) => Promise<void>) => {
+	const res = await prompt('>');
+	await doOnFetch(res as string);
+	await fetchInput(doOnFetch);
 };
+const wss = new _WebSocket.Server({port: 8080});
+let shouldSave = false;
+let saveTo = '';
+export const startWsServer = async () => {
+	wss.on('connection', async (ws) => {
+		ws.on('message', async (message) => {
+			try {
+				console.log(JSON.parse(JSON.parse(message).response));
+				if(shouldSave && saveTo) {
+					shouldSave = false;
+					fs.writeFileSync(saveTo, JSON.stringify(JSON.parse(JSON.parse(message).response), null, 2));
+					saveTo = '';
 
-export const startWsServer = () => {
-    console.log('startup...');
-    wss.on('connection', ws => {
-        // setupLineReader(ws);
-        console.log('connected');
-        console.log('>');
-        // ws.send('console.log("hello")');
-        ws.on('message', message => {
-            // console.log(`Received message => ${message}`);
-            try {
-                console.log(JSON.parse(message).response);
-                console.log('>');
-                // rl.prompt();
-                // setupLineReader(ws);
-            } catch {
+				}
+			} catch (e) {
+				console.error('Error processing response.');
+				console.log(JSON.parse(message).response);
 
-            }
-        });
-        // wsConnections.push(ws);
+			}
+			const query: string = await prompt('>');
+			if (query.includes('|')) {
+				ws.send(query.split('|')[0]);
+				shouldSave = true;
+				saveTo = query.split('|')[1];
+			} else {
+				ws.send(query);
+				shouldSave = false;
+				saveTo = '';
+			}
 
-        ws.onclose = () => {
-            console.log('connection lost!..');
-            process.exit();
-            //removeFromWsConnections(ws);
-        };
-        standard_input.on('data', (d) => {
-            ws.send(d);
-        })
+		});
 
-    });
+		ws.onclose = () => {
+			console.log('connection lost!..');
+		};
+		ws.send(await prompt('>'));
+	});
 
 };
 

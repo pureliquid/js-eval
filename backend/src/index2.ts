@@ -6,22 +6,22 @@ const wss = new _WebSocket.Server({port: 8080});
 
 
 export const startWsServer = () => {
-    console.log('startup...');
-    wss.on('connection', ws => {
-        console.log('connected');
-        ws.on('message', message => {
-            console.log(message);
-        });
-        // wsConnections.push(ws);
+	console.log('startup...');
+	wss.on('connection', ws => {
+		console.log('connected');
+		ws.on('message', message => {
+			console.log(message);
+		});
+		// wsConnections.push(ws);
 
-        ws.onclose = () => {
-            console.log('connection lost!..');
-            process.exit();
-            //removeFromWsConnections(ws);
-        };
+		ws.onclose = () => {
+			console.log('connection lost!..');
+			process.exit();
+			//removeFromWsConnections(ws);
+		};
+ 
 
-
-    });
+	});
 
 };
 

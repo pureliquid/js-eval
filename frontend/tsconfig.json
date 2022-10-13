@@ -9,7 +9,7 @@
     "noImplicitAny": false,
     "moduleResolution": "node",
     "sourceMap": true,
-    "outDir": "../dist/frontend",
+    "outDir": "../old_dist/frontend",
     "baseUrl": ".",
     "paths": {
       "*": [

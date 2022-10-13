@@ -10,7 +10,7 @@
     "noImplicitAny": false,
     "moduleResolution": "node",
     "sourceMap": true,
-    "outDir": "../dist/backend/",
+    "outDir": "../old_dist/backend/",
     "baseUrl": ".",
     "paths": {
       "*": [
