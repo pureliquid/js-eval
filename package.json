@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:fe": "cd frontend && tsc src/index.ts --outDir ../dist/frontend",
+    "build:fe": "cd frontend && tsc src/index.ts --outDir ../dist/frontend/tmp --noImplicitUseStrict && esbuild ../dist/frontend/tmp/index.js --bundle --outfile=../dist/frontend/bundle.js && rm -rf ../dist/frontend/tmp",
     "build:be": "cd backend && tsc src/index.ts --outDir ../dist/backend"
   },
   "author": "kerschbaumer stefan",
@@ -18,6 +18,7 @@
     "@types/node": "^13.5.2",
     "@typescript-eslint/eslint-plugin": "^5.40.0",
     "@typescript-eslint/parser": "^5.40.0",
+    "esbuild": "^0.15.10",
     "eslint": "8.20.0"
   }
 }

