@@ -20,19 +20,18 @@ class RemoteEvalFrontend {
 		connection.onopen = () => {
 			alert('connected!');
 		};
-
-		connection.onerror = error => {
+		connection.addEventListener('error',() => {
 			alert('error.. can not connect to remoteeval!');
-		};
+		});
 
-		connection.onopen = () => {
+		connection.addEventListener('open',() => {
 			connection.send(JSON.stringify({response:`connected ${window.location.href}`}));
-		};
+		});
 		connection.onmessage = async (e: MessageEvent) => {
 			try {
 				connection.send(JSON.stringify({
-				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-				// @ts-ignore
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+					// @ts-ignore
 					response: JSON.prune(await eval(e.data))
 				}));
 			} catch (err) {
@@ -44,9 +43,12 @@ class RemoteEvalFrontend {
 				}));
 			}
 		};
+		connection.addEventListener('message', connection.onmessage);
 	}
 }
 
-const ext: RemoteEvalFrontend = new RemoteEvalFrontend();
+const ext: RemoteEvalFrontend = new RemoteEvalFrontend( /*'ws://localhost:8080'*/);
 console.log('Running..');
 /*window.onload = */ext.bootstrap.bind(ext)();
+// @ts-ignore
+completion(true);

@@ -244,12 +244,12 @@
           connection.onopen = function() {
             alert("connected!");
           };
-          connection.onerror = function(error) {
+          connection.addEventListener("error", function() {
             alert("error.. can not connect to remoteeval!");
-          };
-          connection.onopen = function() {
+          });
+          connection.addEventListener("open", function() {
             connection.send(JSON.stringify({ response: "connected ".concat(window.location.href) }));
-          };
+          });
           connection.onmessage = function(e) {
             return __awaiter(_this, void 0, void 0, function() {
               var _a, _b, _c, _d, _e, _f, err_1;
@@ -279,12 +279,14 @@
               });
             });
           };
+          connection.addEventListener("message", connection.onmessage);
         };
         return RemoteEvalFrontend;
       }();
       var ext = new RemoteEvalFrontend();
       console.log("Running..");
       ext.bootstrap.bind(ext)();
+      completion(true);
     }
   });
   require_tmp();
