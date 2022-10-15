@@ -6,12 +6,14 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:fe": "cd frontend && tsc src/index.ts --outDir ../dist/frontend/tmp --noImplicitUseStrict && esbuild ../dist/frontend/tmp/index.js --bundle --outfile=../dist/frontend/bundle.js && rm -rf ../dist/frontend/tmp",
-    "build:be": "cd backend && tsc src/index.ts --outDir ../dist/backend"
+    "build:be": "cd backend && tsc src/index.ts --outDir ../dist/backend",
+    "build:be:secure": "cd backend && tsc src/index-secure.ts --outDir ../dist/backend"
   },
   "author": "kerschbaumer stefan",
   "license": "ISC",
   "dependencies": {
     "keypress": "^0.2.1",
+    "websocket": "^1.0.34",
     "ws": "^7.2.1"
   },
   "devDependencies": {

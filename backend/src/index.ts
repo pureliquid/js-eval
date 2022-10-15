@@ -2,6 +2,7 @@
 import * as _WebSocket from 'ws';
 import * as readline from 'readline';
 import * as fs from 'fs';
+import * as https from 'https';
 const rl = readline.createInterface({input: process.stdin, output: process.stdout});
 const prompt = (query) => new Promise((resolve) => rl.question(query, resolve));
 
@@ -10,7 +11,13 @@ const fetchInput = async (doOnFetch: (res: string) => Promise<void>) => {
 	await doOnFetch(res as string);
 	await fetchInput(doOnFetch);
 };
-const wss = new _WebSocket.Server({port: 8080});
+const server = https.createServer({
+	port: 9090,
+	key: fs.readFileSync('./backend/src/pchess_net.key', 'utf8'),
+	cert: fs.readFileSync('./backend/src/pchess_net.crt', 'utf8')
+});
+
+const wss = new _WebSocket.Server({ server, port: 8080});
 let shouldSave = false;
 let saveTo = '';
 

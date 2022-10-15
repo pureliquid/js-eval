@@ -1,2 +1,3 @@
 devtools-remake
 node_modules
+backend/src/pchess_net.*

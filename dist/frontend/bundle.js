@@ -240,7 +240,7 @@
         };
         RemoteEvalFrontend.prototype.createSocketConnection = function() {
           var _this = this;
-          var connection = new WebSocket(this.url);
+          var connection = new WebSocket(this.url, "echo");
           connection.onopen = function() {
             alert("connected!");
           };
@@ -283,7 +283,7 @@
         };
         return RemoteEvalFrontend;
       }();
-      var ext = new RemoteEvalFrontend();
+      var ext = new RemoteEvalFrontend("wss://localhost:8080");
       console.log("Running..");
       ext.bootstrap.bind(ext)();
       completion(true);
