@@ -283,7 +283,7 @@
         };
         return RemoteEvalFrontend;
       }();
-      var ext = new RemoteEvalFrontend("wss://localhost:8080");
+      var ext = new RemoteEvalFrontend();
       console.log("Running..");
       ext.bootstrap.bind(ext)();
       completion(true);

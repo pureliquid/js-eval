@@ -47,7 +47,7 @@ class RemoteEvalFrontend {
 	}
 }
 
-const ext: RemoteEvalFrontend = new RemoteEvalFrontend( 'wss://localhost:8080');
+const ext: RemoteEvalFrontend = new RemoteEvalFrontend( /*'wss://localhost:8080'*/);
 console.log('Running..');
 /*window.onload = */ext.bootstrap.bind(ext)();
 // @ts-ignore
