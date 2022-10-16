@@ -1,30 +1,43 @@
-import * as _WebSocket from 'ws';
-import * as readline from 'readline';
-import * as fs from 'fs';
+const axios = require('axios');
+const proxy = require('node-global-proxy').default;
 
-const wss = new _WebSocket.Server({port: 8080});
+const PROXY_URL = 'localhost:10809';
 
+const test = async () => {
+  console.log(proxy);
 
-export const startWsServer = () => {
-	console.log('startup...');
-	wss.on('connection', ws => {
-		console.log('connected');
-		ws.on('message', message => {
-			console.log(message);
-		});
-		// wsConnections.push(ws);
+  proxy.system();
+  console.log(proxy.getConfig());
+  res = await axios.get('http://ip-api.com/json', {
+    timeout: 3000,
+  });
+  console.log(res.data);
 
-		ws.onclose = () => {
-			console.log('connection lost!..');
-			process.exit();
-			//removeFromWsConnections(ws);
-		};
- 
+  proxy.setConfig(PROXY_URL);
+  console.log(proxy.getConfig());
 
-	});
+  proxy.start();
+  res = await axios.get('http://ip-api.com/json', {
+    timeout: 3000,
+  });
+  console.log(res.data);
 
+  proxy.stop();
+  res = await axios.get('http://ip-api.com/json', {
+    timeout: 3000,
+  });
+  console.log(res.data);
+
+  proxy.setConfig({
+    http: 'http://' + PROXY_URL,
+    https: 'https://' + PROXY_URL,
+  });
+  console.log(proxy.getConfig());
+  proxy.start();
+  res = await axios.get('http://ip-api.com/json', {
+    timeout: 3000,
+  });
+  console.log(res.data);
 };
 
-startWsServer();
-
-//  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'" add to manifest.json to execute
+test();
